@@ -1,4 +1,4 @@
-import { replace, useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect, useMemo } from "react";
 import EmailAuthForm, { EmailFormDataType } from "@components/EmailAuthForm";
 import Logo from "@components/Icons/Logo";
@@ -11,6 +11,7 @@ import { baseInstance } from "@apis/axios.config";
 
 const SigninPage = () => {
   const [searchParams] = useSearchParams();
+  const code = searchParams.get("code");
   const navigate = useNavigate();
   const { updateUser } = useUserContext();
   const handleEmailSignin = (formData: EmailFormDataType) => {
@@ -28,7 +29,9 @@ const SigninPage = () => {
     if (errorMessage) {
       toast.error(errorMessage);
     }
-    const code = searchParams.get("code");
+  }, [searchParams]);
+
+  useEffect(() => {
     if (!code) {
       return;
     }
@@ -37,7 +40,7 @@ const SigninPage = () => {
       .then(() => {
         navigate("/", { replace: true });
       });
-  }, [searchParams]);
+  }, [code]);
   return (
     <div
       className="w-screen flex justify-center items-center"
