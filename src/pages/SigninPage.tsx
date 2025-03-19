@@ -1,4 +1,4 @@
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { replace, useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect, useMemo } from "react";
 import EmailAuthForm, { EmailFormDataType } from "@components/EmailAuthForm";
 import Logo from "@components/Icons/Logo";
@@ -7,6 +7,7 @@ import GoogleOauthButton from "@components/Button/GoogleOauthButton";
 import { useUserContext } from "@context/userContext";
 import { signinWithEmail } from "@apis/auth.api";
 import { toast } from "react-toastify";
+import { baseInstance } from "@apis/axios.config";
 
 const SigninPage = () => {
   const [searchParams] = useSearchParams();
@@ -27,6 +28,15 @@ const SigninPage = () => {
     if (errorMessage) {
       toast.error(errorMessage);
     }
+    const code = searchParams.get("code");
+    if (!code) {
+      return;
+    }
+    baseInstance //
+      .get(`/auth/google-oauth-redirect?code=${code}`)
+      .then(() => {
+        navigate("/", { replace: true });
+      });
   }, [searchParams]);
   return (
     <div
